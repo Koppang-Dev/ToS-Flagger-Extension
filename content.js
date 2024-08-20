@@ -1,4 +1,25 @@
 
+console.log('Content script loaded');
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.event === 'onStart') {
+         // Call your functions after handling the message
+         if (isTermsOfServicePage()) {
+            const { content, headers } = extractContent();
+            console.log('Content:', content);
+            console.log('Headers:', headers);
+        } else {
+            console.log('Page is not a ToS page');
+        }
+        sendResponse( {status: 'recieved'});
+        // Handle the message here
+    } else {
+        console.log('Something went wrong');
+    }
+
+    return false;
+});
+
 // Possible terms of services elements
 const possibleTOSSelectors = [
     'a[href*="terms"]',
@@ -71,19 +92,3 @@ function extractContent() {
         headers: headers.trim()
     }
 }
-
-
-// Listen for scanning message from background script
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.event == 'onStart') {
-        // Check if it is a ToS page
-        if (isTermsOfServicePage()) {
-            const {content, headers} = extractContent();
-            console.log('Content:', content);
-            console.log('Headers', headers)
-        } else {
-            // Not a TOS page
-            console.log('This page is anot identified as a Terms of Service Page');
-        }
-    }
-})

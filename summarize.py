@@ -21,6 +21,12 @@ def process_data():
         content = data.get('content')
         headers = data.get('headers')
 
+        # Turn the headers into a list
+        if isinstance(headers, str):
+            headers = headers.split('\n')
+            print(content)
+            
+
         table_df = create_table(content, headers)
 
         # Printing our dataframe

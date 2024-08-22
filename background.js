@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(details => {
 // Message Listeer
 chrome.runtime.onMessage.addListener(data => {
 
-    const {event, prefs, content, headers} = data
+    const {event, prefs, headerContentPairs} = data
 
     switch(event) {
         case 'onStop':
@@ -18,7 +18,9 @@ chrome.runtime.onMessage.addListener(data => {
             break;
         case 'sendData':
             // Data recieved from content script
-            sendDataToServer(content, headers)
+            console.log(headerContentPairs);
+            sendDataToServer(headerContentPairs);
+            break;
     }
 })
 
@@ -72,9 +74,10 @@ function injectIntoTabs() {
 
 
 // Sends the ToS content to Flask Server
-function sendDataToServer(content, headers) {
+function sendDataToServer(headerContentPairs) {
     const url = 'http://127.0.0.1:8080/process'; // Flask server URL
-    const data = { content: content, headers: headers};
+
+    console.log("Sending Data to server:", headerContentPairs);
 
     // HTTP request
     fetch(url, {
@@ -82,7 +85,7 @@ function sendDataToServer(content, headers) {
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify({ headerContentPairs })
     })
     .then(response => response.json())
     .then(data => console.log('Success:', data))

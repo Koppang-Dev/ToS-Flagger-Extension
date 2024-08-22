@@ -15,34 +15,21 @@ def process_data():
     # Log incomming data
     #logging.debug("Recieved request: %s", request.data)
 
+    print("In server")
+
     try:
         # Extracting data
         data = request.json
-        content = data.get('content')
-        headers = data.get('headers')
+        header_content_pairs = data.get('headerContentPairs', [])
 
-        # Turn the headers into a list
-        if isinstance(headers, str):
-            headers = headers.split('\n')
-            print(content)
-            
-
-        table_df = create_table(content, headers)
-
-        # Printing our dataframe
-        print("Data Frame: %s", table_df)
-
-
-        # Summarizing the content
-
-        # 
-        summarized_content = summarized_content(content)
-        #logging.debug("Summary: %s", summarized_content)
+        # Converting to pandas dataframe
+        df = pd.DataFrame(header_content_pairs)
+        print(df)
 
         # Response back to application
         return jsonify({
             "message": "Data Recieved successfully",
-            "summarized_content": summarized_content
+            "Content": header_content_pairs
         }), 200
 
     
@@ -50,12 +37,6 @@ def process_data():
         # Logging errors that occur
         logging.error("Error processing request: %s", str(e))
         return jsonify({"error", "Internal Server Error"}), 500
-
-
-def create_table(content, headers):
-    # Create a dataframe using the headers and content
-    df = pd.DataFrame([content], columns=headers)
-    return df
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port =8080, debug=True)

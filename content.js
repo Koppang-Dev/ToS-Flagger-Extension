@@ -6,17 +6,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
         if (isTermsOfServicePage()) {
             // Is a ToS page
-            const { content, headers } = extractContent();
-            response.content = content; // Returning content
-            response.headers = headers; // Returning headers
+            const headerContentPairs = extractContent(); // Getting header and content
 
             // Sending scrapped data back to background script
             chrome.runtime.sendMessage({
                 event: 'sendData',
-                content: content,
-                headers: headers
-            });
-            
+                headerContentPairs: headerContentPairs
+            });            
         } else {
             // Not a ToS page
             response.error = 'Page is not a ToS page';
@@ -74,28 +70,81 @@ function containsTOSkeys(text, keywords) {
 
 // Extracts the headers and body of the ToS
 function extractContent() {
-    let content = '';
-    let headers = '';
 
-    // Header Selectors
+    // Initalizing header and content
+    let headerContentPairs = []; // Array to store header-content pairs
+    let currentHeader = null;
+    let currentContent = '';
     const headerSelectors = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
-    // Extract text from entire body
-    const bodyText = document.body.textContent || '';
-    content += bodyText;
+    // List of selectors to ignore
+    const ignoreSelectors = ['.tab-bar', '.footer', '.header', '#sidebar', '#top-bar', 'path'];
 
-    // Extract Headers
-    for (const selector of headerSelectors) {
-        const headerElements = document.querySelectorAll(selector);
+     // Helper function to check if a node should be ignored 
+     function shouldIgnore(node) {
 
-        // Finding headers
-        for (const header of headerElements) {
-            headers += `${header.tagName}: ${header.textContent}\n`; // Correct template string
+        // If not element node then dont ignore
+        if (node.nodeType !== Node.ELEMENT_NODE) return false;
+
+        // Ignore if node matches ignore selectors
+        if (ignoreSelectors.some(selector => node.matches(selector))) return true;
+
+
+        // Check if any of the parent nodes match ignore selectors
+        let parent = node.parentElement;
+        while (parent) {
+            if (ignoreSelectors.some(selector => parent.matches(selector))) return true;
+            parent = parent.parentElement;
         }
+        
+        // Do not ignore
+        return false;
     }
 
-    return {
-        content: content.trim(),
-        headers: headers.trim()
-    };
-}
+    // Processes node and accumulates content
+    function processNode(node) {
+        if (node.nodeType == Node.ELEMENT_NODE) {
+            const tagName = node.tagName.toLowerCase();
+
+            if (shouldIgnore(node)) {
+                return
+            }
+
+            // Check if the node is a header
+            if (headerSelectors.includes(tagName)) {
+
+                // If there is an exisitng header, push its contents
+                if (currentHeader != null) {
+                    headerContentPairs.push({
+                        header: currentHeader,
+                        content: currentContent.trim()
+                    });
+                }
+
+                // Set the new header
+                currentHeader = node.textContent.trim();
+                currentContent = ''; // Set fresh
+
+            } else if (tagName === 'p' || tagName === 'div') {
+                // Adding content
+                currentContent += node.textContent.trim() + ' ';
+            }
+            }
+
+            // Process each child node
+            node.childNodes.forEach(child => processNode(child));
+        }
+
+        // Start processing body text
+        processNode(document.body);
+
+        // Push last header-content pair if available
+        if (currentHeader !== null) {
+            headerContentPairs.push({
+                header: currentHeader,
+                content: currentContent
+            });
+        }
+
+        return headerContentPairs;
+    }

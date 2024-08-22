@@ -9,6 +9,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             const { content, headers } = extractContent();
             response.content = content; // Returning content
             response.headers = headers; // Returning headers
+
+            // Sending scrapped data back to background script
+            chrome.runtime.sendMessage({
+                event: 'sendData',
+                content: content,
+                headers: headers
+            });
+            
         } else {
             // Not a ToS page
             response.error = 'Page is not a ToS page';

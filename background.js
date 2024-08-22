@@ -52,7 +52,8 @@ function injectIntoTabs() {
 
                 // Sending message
                 chrome.tabs.sendMessage(tabID, { event: 'onStart' }, (response) => {
-                    console.log("Message Recived");
+                    console.log("Message Recieved");
+                    console.log(response);
                     if (chrome.runtime.lastError) {
                         console.error('Error sending message:', chrome.runtime.lastError);
                     } else {

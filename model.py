@@ -13,7 +13,6 @@ genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
 model = genai.GenerativeModel(model_name="gemini-1.5-flash")
 
 def summarize_tos(text):
-    model.generate_content("This is a section of a Terms of Service, please summarize the following text, highlighting red flags and potential issues for issues. If it seems like it has nothing to do with terms and service, respond with nothing")
-    response = model.generate_content("Here is the text:" + text)
+    response = model.generate_content("This is a section of a Terms of Service. Only summarize and identify red flags and potential issues for users, nothing else. Here is the text" + text)
     print(response.text)
-    return response
+    return response.text

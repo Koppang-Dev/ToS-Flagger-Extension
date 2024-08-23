@@ -21,6 +21,12 @@ chrome.runtime.onMessage.addListener(data => {
             console.log(headerContentPairs);
             sendDataToServer(headerContentPairs);
             break;
+        case 'updatePopup':
+            // Show the user the summarized and highlighted data
+            chrome.storage.local.get('tosSummary', (data) =>{
+                chrome.runtime.sendMessage({event: 'updatePopupContent', content: data.tosSummary});
+            });
+            break;
     }
 })
 
@@ -88,6 +94,16 @@ function sendDataToServer(headerContentPairs) {
         body: JSON.stringify({ headerContentPairs })
     })
     .then(response => response.json())
-    .then(data => console.log('Success:', data))
-    .catch((error) => console.error('Error:', error))
+    .then(data => {
+        // Handle Response
+        console.log('Success:', data.message);
+        console.log('Combined Summary:', data.Content)
+
+        // Save summary to chrome storage
+        chrome.storage.local.set({ tosSummary: data.Content }, () => {
+            // Open the new popup
+            chrome.tabs.create({ url: chrome.runtime.getURL('summary_popup/summary_popup.html') })
+        });
+    })
+    .catch((error) => console.error('Error:', error));
 }

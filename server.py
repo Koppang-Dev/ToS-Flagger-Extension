@@ -22,24 +22,21 @@ def process_data():
         # Extracting data
         data = request.json
         header_content_pairs = data.get('headerContentPairs', [])
-        
 
-        #Iterate through header_content_pairs and summarize each content
-        for pair in header_content_pairs:
-            header = pair['header']
-            content = pair['content']
-            summary = summarize_tos(content)
-            # Update content with summary
-            pair['summary'] = summary
+        # Combine content into a single string
+        combined_content = " ".join(pair['content'] for pair in header_content_pairs if 'content' in pair)        
 
-        # Converting to pandas dataframe
-        df = pd.DataFrame(header_content_pairs)
-        print(df)
+        # Combined summary
+        combined_summary = summarize_tos(combined_content)
+
+        # Turning response into a string if necessary
+        if not isinstance(combined_summary, str):
+            combined_summary = str(combined_summary)
 
         # Response back to application
         return jsonify({
             "message": "Data Recieved successfully",
-            "Content": header_content_pairs
+            "Content": combined_summary
         }), 200
 
     

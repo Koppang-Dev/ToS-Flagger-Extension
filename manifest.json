@@ -29,6 +29,12 @@
             "js": ["content.js"],
             "runs_at": "document_end"
         }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["summary_popup/summary_popup.html"],
+            "matches": ["<all_urls>"]
+        }
     ]
     
 }

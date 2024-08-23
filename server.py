@@ -22,17 +22,15 @@ def process_data():
         # Extracting data
         data = request.json
         header_content_pairs = data.get('headerContentPairs', [])
+        
 
-
-        # Iterate through header_content_pairs and summarize each content
+        #Iterate through header_content_pairs and summarize each content
         for pair in header_content_pairs:
             header = pair['header']
             content = pair['content']
             summary = summarize_tos(content)
-
             # Update content with summary
             pair['summary'] = summary
-
 
         # Converting to pandas dataframe
         df = pd.DataFrame(header_content_pairs)

@@ -12,12 +12,8 @@ load_dotenv()
 genai.configure(api_key=os.environ.get("GOOGLE_API_KEY"))
 model = genai.GenerativeModel(model_name="gemini-1.5-flash")
 
-def summarize_tos(text, redflag_threshold=0.7):
-    # Access your Gemini model instance here (explained later)
-    summary = model.generate_text(
-        prompt=f"Please summarize the following text, highlighting red flags with a confidence score above {redflag_threshold}:\n\n{text}",
-        max_tokens=1500,
-        temperature=0.5
-    )
-    # Extract and return the generated summary
-    return summary.choices[0].text.strip()
+def summarize_tos(text):
+    model.generate_content("This is a section of a Terms of Service, please summarize the following text, highlighting red flags and potential issues for issues. If it seems like it has nothing to do with terms and service, respond with nothing")
+    response = model.generate_content("Here is the text:" + text)
+    print(response.text)
+    return response

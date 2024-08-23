@@ -1,73 +1,47 @@
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Arial', sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
     margin: 0;
     padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
-}
-
-#summary {
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    line-height: 1.6;
+    background-color: #f5f5f5;
     color: #444;
 }
 
+#summary {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-    color: #222;
-    border-bottom: 2px solid #eee;
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    color: #000;
+    border-bottom: 3px solid #eee;
     padding-bottom: 10px;
 }
 
-strong {
-    font-weight: 600;
-    color: #000;
-}
-
 h2 {
-    font-size: 22px;
-    margin-top: 20px;
-    margin-bottom: 15px;
+    font-size: 24px;
+    font-weight: 500;
+    margin-top: 30px;
+    margin-bottom: 20px;
     color: #333;
     border-bottom: 1px solid #ddd;
     padding-bottom: 5px;
 }
 
-ul {
-    list-style-type: disc;
-    margin: 15px 0;
-    padding-left: 20px;
-}
+/* ... rest of your CSS ... */
 
-ol {
-    list-style-type: decimal;
-    margin: 15px 0;
-    padding-left: 20px;
-}
-
-li {
-    margin-bottom: 10px;
-}
-
-p {
-    margin: 12px 0;
-}
-
-br {
-    margin: 10px 0;
-}
-
-a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
+@media screen and (max-width: 768px) {
+    #summary {
+        margin: 20px;
+    }
+    /* Add other media query rules as needed */
 }

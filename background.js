@@ -99,6 +99,9 @@ function sendDataToServer(headerContentPairs) {
         console.log('Success:', data.message);
         console.log('Combined Summary:', data.Content)
 
+        // Update checked count
+        updatePagesAnalyzed();
+
         // Save summary to chrome storage
         chrome.storage.local.set({ tosSummary: data.Content }, () => {
             // Open the new popup
@@ -106,4 +109,19 @@ function sendDataToServer(headerContentPairs) {
         });
     })
     .catch((error) => console.error('Error:', error));
+}
+
+
+// Will update the checked pages count in the popup
+function updatePagesAnalyzed() {
+    chrome.storage.local.get('checkedCount', (result) => {
+        // Get previous count
+        const currentCount = result.checkedCount || 0;
+        const newCheckedCount = currentCount + 1;
+
+        // Save new count
+        chrome.storage.local.set({ checkedCount: newCheckedCount}, () => {
+            console.log('Check count updated to:', newCheckedCount);
+        });
+    });
 }

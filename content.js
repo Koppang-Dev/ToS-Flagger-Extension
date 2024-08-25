@@ -16,6 +16,12 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         } else {
             // Not a ToS page
             response.error = 'Page is not a ToS page';
+
+            // Send a message to the popup to show the error
+            chrome.runtime.sendMessage({
+                event: 'error',
+                message: 'This is not a terms of service page.'
+            })
         }
 
         // Sending response object back

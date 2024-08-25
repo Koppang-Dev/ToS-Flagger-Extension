@@ -38,6 +38,8 @@ const handleOnStop = () => {
 
 // Handling start button
 const handleOnStart = (prefs) => {
+
+    // 
     console.log("On start in background");
     console.log("Prefs output:", prefs);
     chrome.storage.local.set(prefs); // Pulling Data from local storage
@@ -125,3 +127,5 @@ function updatePagesAnalyzed() {
         });
     });
 }
+
+

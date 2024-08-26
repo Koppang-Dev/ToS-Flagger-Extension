@@ -129,3 +129,29 @@ function updatePagesAnalyzed() {
 }
 
 
+
+
+// Injecting Script into current tab
+
+
+// Automatically start when the browser starts (called when the extension first fires up)
+chrome.runtime.onStartup.addListener(() => {
+    chrome.tabs.query({ active: true, currentWindow: true}, (tabs) => {
+        if (tabs.length > 0) {
+            injectIntoTabs(tabs[0].id);
+        }
+    })
+})
+
+// Listening for tab activation (Switching)
+chrome.tabs.onActivated.addListener((activeInfo) => {
+    injectIntoTabs(activeInfo.tabID);
+})
+
+// Listening for tab updates (Navigation to a new page)
+chrome.tabs.onUpdated.addListener((tabID, changeInfo, tab) => {
+    if (changeInfo.status === 'complete') {
+        // Tab has fully loaded
+        injectIntoTabs(tabID);
+    }
+})
